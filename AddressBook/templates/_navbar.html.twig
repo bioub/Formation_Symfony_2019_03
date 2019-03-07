@@ -1,0 +1,24 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light mb-3">
+    <a class="navbar-brand" href="{{ path('app_home_index') }}">AddressBook</a>
+
+    <button class="navbar-toggler" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="{{ path('app_home_index') }}">Home</a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="{{ path('app_contact_list') }}" data-toggle="dropdown">
+                    Contacts
+                </a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="{{ path('app_contact_list') }}">Lister</a>
+                    <a class="dropdown-item" href="{{ path('app_contact_create') }}">Ajouter</a>
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>

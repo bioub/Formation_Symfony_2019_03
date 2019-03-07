@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h2>Lister des contacts</h2>
+
+    <table class="table">
+        {% for c in contacts %}
+        <tr>
+            <td>{{ c.firstName }} {{ c.lastName }}</td>
+            <td>
+                <a href="{{ path('app_contact_show', {id: c.id}) }}" class="btn btn-sm btn-primary">Afficher</a>
+                <a href="{{ path('app_contact_update', {id: c.id}) }}" class="btn btn-sm btn-warning">Modifier</a>
+                <a href="{{ path('app_contact_delete', {id: c.id}) }}" class="btn btn-sm btn-danger">Supprimer</a>
+            </td>
+        </tr>
+        {% else %}
+            <tr>
+                <td>Pas de contacts</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

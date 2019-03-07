@@ -1,0 +1,8 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h2>Afficher un contact</h2>
+
+    <p>Prénom : {{ contact.firstName }}</p>
+    <p>Nom : {{ contact.lastName | upper }}</p>
+{% endblock %}
