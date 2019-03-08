@@ -3,14 +3,18 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ContactRepository")
+ * @ORM\Table(name="contact", indexes={
+ *   @ORM\Index(columns={"first_name"})
+ * })
  */
 class Contact
 {
     /**
-     * @ORM\Id()
+     * @ORM\Id
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      */
@@ -18,6 +22,8 @@ class Contact
 
     /**
      * @ORM\Column(type="string", length=40)
+     * @Assert\NotBlank(message="Le prénom est obligatoire")
+     * @Assert\Length(max=40)
      */
     private $firstName;
 
@@ -40,6 +46,11 @@ class Contact
      * @ORM\Column(type="date", nullable=true)
      */
     private $birthdate;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Company")
+     */
+    protected $company;
 
     public function getId(): ?int
     {
@@ -102,6 +113,18 @@ class Contact
     public function setBirthdate(\DateTimeInterface $birthdate): self
     {
         $this->birthdate = $birthdate;
+
+        return $this;
+    }
+
+    public function getCompany(): ?Company
+    {
+        return $this->company;
+    }
+
+    public function setCompany(?Company $company): self
+    {
+        $this->company = $company;
 
         return $this;
     }

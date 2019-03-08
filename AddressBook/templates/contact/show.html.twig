@@ -5,4 +5,17 @@
 
     <p>Prénom : {{ contact.firstName }}</p>
     <p>Nom : {{ contact.lastName | upper }}</p>
+
+    {% if contact.email %}
+        <p>Email : {{ contact.email }}</p>
+    {% endif %}
+
+    {% if contact.phone %}
+        <p>Téléphone : {{ contact.phone }}</p>
+    {% endif %}
+
+    {% if contact.company %}
+        <p>Société : {{ contact.company.name }}</p>
+    {% endif %}
+
 {% endblock %}

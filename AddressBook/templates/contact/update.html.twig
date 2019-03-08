@@ -1,5 +1,17 @@
+{% form_theme contactForm 'bootstrap_4_layout.html.twig' %}
 {% extends 'base.html.twig' %}
 
 {% block body %}
     <h2>Modifier un contact</h2>
+
+    {{ form_start(contactForm, {attr: {novalidate: 'novalidate'}}) }}
+    {{ form_row(contactForm.firstName) }}
+    {{ form_row(contactForm.lastName) }}
+    {{ form_row(contactForm.phone) }}
+    {{ form_row(contactForm.email) }}
+    {{ form_row(contactForm.birthdate) }}
+    <div>
+        <button class="btn btn-primary">Update</button>
+    </div>
+    {{ form_end(contactForm) }}
 {% endblock %}

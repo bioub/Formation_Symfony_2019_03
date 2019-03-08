@@ -1,9 +1,36 @@
+{% form_theme contactForm 'bootstrap_4_layout.html.twig' %}
 {% extends 'base.html.twig' %}
 
 {% block title %}Ajouter un contact{% endblock %}
 
 {% block body %}
-    <h2>Ajouter un contact</h2>
+    <h2>{{ 'Ajouter un contact' | trans }}</h2>
+
+    {{ form_start(contactForm, {attr: {novalidate: 'novalidate'}}) }}
+    {{ form_row(contactForm.firstName) }}
+    {{ form_row(contactForm.lastName) }}
+    {{ form_row(contactForm.phone) }}
+    {{ form_row(contactForm.email) }}
+    {{ form_row(contactForm.birthdate) }}
+    <div>
+        <button class="btn btn-primary">Ajouter</button>
+    </div>
+    {{ form_end(contactForm) }}
+
+    {#
+    {{ form_start(contactForm) }}
+    <div class="form-group">
+        {{ form_label(contactForm.firstName) }}
+        {{ form_widget(contactForm.firstName, {'attr': {'class': 'form-control'}}) }}
+        {{ form_errors(contactForm.firstName) }}
+    </div>
+    {{ form_end(contactForm) }}
+    #}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>console.log('create')</script>
 {% endblock %}
 
 {% block stylesheets %}

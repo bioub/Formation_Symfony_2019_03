@@ -3,8 +3,12 @@
 namespace App\Controller;
 
 use App\Entity\Contact;
+use App\Form\ContactType;
 use Doctrine\DBAL\Connection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -32,9 +36,29 @@ class ContactController extends AbstractController
     /**
      * @Route("/add")
      */
-    public function create()
+    public function create(Request $request)
     {
-        return $this->render('contact/create.html.twig', []);
+        $contactForm = $this->createForm(ContactType::class);
+        $contactForm->handleRequest($request);
+
+        if ($contactForm->isSubmitted() && $contactForm->isValid()) {
+            $contact = $contactForm->getData();
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($contact);
+            $em->flush();
+
+            $this->addFlash(
+                'success',
+                "{$contact->getFirstName()} {$contact->getLastName()} a bien été créé"
+            );
+            
+            return $this->redirectToRoute('app_contact_list');
+        }
+
+        return $this->render('contact/create.html.twig', [
+            'contactForm' => $contactForm->createView(),
+        ]);
     }
 
     /**
@@ -45,6 +69,10 @@ class ContactController extends AbstractController
         $repo = $this->getDoctrine()->getRepository(Contact::class);
         $contact = $repo->find($id);
 
+        if (!$contact) {
+            throw $this->createNotFoundException('Contact Not Found');
+        }
+
         return $this->render('contact/show.html.twig', [
             'contact' => $contact,
         ]);
@@ -53,16 +81,69 @@ class ContactController extends AbstractController
     /**
      * @Route("/{id}/update")
      */
-    public function update()
+    public function update($id, Request $request)
     {
-        return $this->render('contact/update.html.twig', []);
+        $repo = $this->getDoctrine()->getRepository(Contact::class);
+        $contact = $repo->find($id);
+
+        if (!$contact) {
+            throw $this->createNotFoundException('Contact Not Found');
+        }
+
+        $contactForm = $this->createForm(ContactType::class);
+        $contactForm->setData($contact);
+        $contactForm->handleRequest($request);
+
+        if ($contactForm->isSubmitted() && $contactForm->isValid()) {
+            $contact = $contactForm->getData();
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($contact);
+            $em->flush();
+
+            $this->addFlash(
+                'success',
+                "{$contact->getFirstName()} {$contact->getLastName()} a bien été mis à jour"
+            );
+
+            return $this->redirectToRoute('app_contact_list');
+        }
+
+        return $this->render('contact/update.html.twig', [
+            'contactForm' => $contactForm->createView(),
+        ]);
     }
 
     /**
      * @Route("/{id}/delete")
      */
-    public function delete()
+    public function delete($id, Request $req)
     {
-        return $this->render('contact/delete.html.twig', []);
+        $repo = $this->getDoctrine()->getRepository(Contact::class);
+        $contact = $repo->find($id);
+
+        if (!$contact) {
+            throw $this->createNotFoundException('Contact Not Found');
+        }
+
+        if ($req->isMethod('POST')) {
+
+            if ($req->get('confirm') === 'oui') {
+                $em = $this->getDoctrine()->getManager();
+                $em->remove($contact);
+                $em->flush();
+
+                $this->addFlash(
+                    'success',
+                    "{$contact->getFirstName()} {$contact->getLastName()} a bien été supprimé"
+                );
+            }
+
+            return $this->redirectToRoute('app_contact_list');
+        }
+
+        return $this->render('contact/delete.html.twig', [
+            'contact' => $contact,
+        ]);
     }
 }

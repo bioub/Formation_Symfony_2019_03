@@ -2,4 +2,11 @@
 
 {% block body %}
     <h2>Supprimer un contact</h2>
+    <form method="post">
+        <p>Êtes-vous sûr de vouloir supprimer {{ contact.firstName }} {{ contact.lastName }} ?</p>
+        <p>
+            <button name="confirm" value="oui" class="btn btn-primary">Oui</button>
+            <button name="confirm" value="non" class="btn btn-light">Non</button>
+        </p>
+    </form>
 {% endblock %}
