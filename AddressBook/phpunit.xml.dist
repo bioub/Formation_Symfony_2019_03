@@ -28,4 +28,8 @@
     <listeners>
         <listener class="Symfony\Bridge\PhpUnit\SymfonyTestsListener" />
     </listeners>
+
+    <logging>
+        <log type="coverage-html" target="var/coverage" />
+    </logging>
 </phpunit>

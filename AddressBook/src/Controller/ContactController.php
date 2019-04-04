@@ -4,11 +4,9 @@ namespace App\Controller;
 
 use App\Entity\Contact;
 use App\Form\ContactType;
-use Doctrine\DBAL\Connection;
+use App\Manager\ContactManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -16,17 +14,26 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class ContactController extends AbstractController
 {
+    /** @var ContactManager */
+    protected $manager;
+
+    /**
+     * ContactController constructor.
+     * @param ContactManager $manager
+     */
+    public function __construct(ContactManager $manager)
+    {
+        $this->manager = $manager;
+    }
+
     /**
      * @Route("/")
      */
     public function list()
     {
-        /** @var $connect Connection */
-        $connect = $this->getDoctrine()->getConnection();
-        $count = $connect->fetchColumn('SELECT COUNT(id) AS count FROM contact');
+        $contacts = $this->manager->getAll();
+        $count = $this->manager->count();
 
-        $repo = $this->getDoctrine()->getRepository(Contact::class);
-        $contacts = $repo->findBy([], [], 100);
         return $this->render('contact/list.html.twig', [
             'contacts' => $contacts,
             'count' => $count,

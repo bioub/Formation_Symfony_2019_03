@@ -3,9 +3,7 @@
 namespace App\Tests\Controller;
 
 use App\Entity\Contact;
-use App\Repository\ContactRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\DBAL\Connection;
+use App\Manager\ContactManager;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class ContactControllerTest extends WebTestCase
@@ -28,19 +26,25 @@ class ContactControllerTest extends WebTestCase
             (new Contact())->setId(2)->setFirstName('C')->setLastName('D'),
         ];
 
-        $mockConnection = $this->prophesize(Connection::class);
-        $mockConnection->fetchColumn('SELECT COUNT(id) AS count FROM contact')->willReturn(2);
+//        $mockConnection = $this->prophesize(Connection::class);
+//        $mockConnection->fetchColumn('SELECT COUNT(id) AS count FROM contact')->willReturn(2);
+//
+//        $mockRepository = $this->prophesize(ContactRepository::class);
+//        $mockRepository->findBy([], [], 100)->willReturn($contacts);
+//
+//        $mockRegistry = $this->prophesize(ManagerRegistry::class);
+//        $mockRegistry->getManagerNames()->willReturn();
+//        $mockRegistry->getConnectionNames()->willReturn();
+//        $mockRegistry->getConnection()->willReturn($mockConnection->reveal());
+//        $mockRegistry->getRepository("App\Entity\Contact")->willReturn($mockRepository->reveal());
 
-        $mockRepository = $this->prophesize(ContactRepository::class);
-        $mockRepository->findBy([], [], 100)->willReturn($contacts);
+//        $client->getContainer()->set('doctrine', $mockRegistry->reveal());
 
-        $mockRegistry = $this->prophesize(ManagerRegistry::class);
-        $mockRegistry->getManagerNames()->willReturn();
-        $mockRegistry->getConnectionNames()->willReturn();
-        $mockRegistry->getConnection()->willReturn($mockConnection->reveal());
-        $mockRegistry->getRepository("App\Entity\Contact")->willReturn($mockRepository->reveal());
+        $mockManager = $this->prophesize(ContactManager::class);
+        $mockManager->count()->willReturn(2)->shouldBeCalledTimes(1);
+        $mockManager->getAll()->willReturn($contacts)->shouldBeCalledTimes(1);
 
-        $client->getContainer()->set('doctrine', $mockRegistry->reveal());
+        static::$container->set(ContactManager::class, $mockManager->reveal());
 
         $crawler = $client->request('GET', '/contacts/');
 
