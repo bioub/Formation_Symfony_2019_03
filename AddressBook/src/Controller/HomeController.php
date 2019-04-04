@@ -19,7 +19,7 @@ class HomeController extends AbstractController
     }
 
     /**
-     * @Route("/hello/{name}", requirements={"name": "[a-z][A-Z]+"})
+     * @Route("/hello/{name}", requirements={"name": "[a-zA-Z]+"})
      */
     public function hello($name)
     {
