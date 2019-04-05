@@ -3,19 +3,19 @@
 namespace App\Tests\Controller;
 
 use App\Entity\Contact;
-use App\Manager\ContactManager;
+use App\Manager\ContactManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class ContactControllerTest extends WebTestCase
 {
-    public function testListWithDatabase()
-    {
-        $client = static::createClient();
-        $crawler = $client->request('GET', '/contacts/');
-
-        $this->assertSame(200, $client->getResponse()->getStatusCode());
-        $this->assertContains('3 contacts', $crawler->filter('table.table + p')->text());
-    }
+//    public function testListWithDatabase()
+//    {
+//        $client = static::createClient();
+//        $crawler = $client->request('GET', '/contacts/');
+//
+//        $this->assertSame(200, $client->getResponse()->getStatusCode());
+//        $this->assertContains('3 contacts', $crawler->filter('table.table + p')->text());
+//    }
 
     public function testListWithoutDatabase()
     {
@@ -40,15 +40,52 @@ class ContactControllerTest extends WebTestCase
 
 //        $client->getContainer()->set('doctrine', $mockRegistry->reveal());
 
-        $mockManager = $this->prophesize(ContactManager::class);
+        $mockManager = $this->prophesize(ContactManagerInterface::class);
         $mockManager->count()->willReturn(2)->shouldBeCalledTimes(1);
         $mockManager->getAll()->willReturn($contacts)->shouldBeCalledTimes(1);
 
-        static::$container->set(ContactManager::class, $mockManager->reveal());
+        static::$container->set(ContactManagerInterface::class, $mockManager->reveal());
 
         $crawler = $client->request('GET', '/contacts/');
 
         $this->assertSame(200, $client->getResponse()->getStatusCode());
         $this->assertContains('2 contacts', $crawler->filter('table.table + p')->text());
+    }
+
+    public function testAddMethodGet()
+    {
+        $client = static::createClient();
+
+        $crawler = $client->request('GET', '/contacts/add');
+
+        $this->assertSame(200, $client->getResponse()->getStatusCode());
+        $this->assertCount(5, $crawler->filter('form[name="contact"] input'));
+    }
+
+    public function testAddMethodPost()
+    {
+        $client = static::createClient();
+
+        $mockManager = $this->prophesize(ContactManagerInterface::class);
+        $client->getContainer()->set(ContactManagerInterface::class, $mockManager->reveal());
+
+        $csrfToken = $client->getContainer()->get('security.csrf.token_manager')->getToken('contact');
+
+        $crawler = $client->request('POST', '/contacts/add', [
+            'contact' => [
+                'firstName' => 'symfonyfan',
+                '_token' => $csrfToken->getValue(),
+                'birthdate' => [
+                    'day' => '1',
+                    'month' => '1',
+                    'year' => '1899'
+                ]
+            ]
+
+        ]);
+
+        $this->assertSame(302, $client->getResponse()->getStatusCode());
+        $this->assertSame('/contacts/', $client->getResponse()->headers->get('Location'));
+
     }
 }

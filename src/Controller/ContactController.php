@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Contact;
 use App\Form\ContactType;
-use App\Manager\ContactManager;
+use App\Manager\ContactManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -14,14 +14,14 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class ContactController extends AbstractController
 {
-    /** @var ContactManager */
+    /** @var ContactManagerInterface */
     protected $manager;
 
     /**
      * ContactController constructor.
-     * @param ContactManager $manager
+     * @param ContactManagerInterface $manager
      */
-    public function __construct(ContactManager $manager)
+    public function __construct(ContactManagerInterface $manager)
     {
         $this->manager = $manager;
     }
@@ -51,9 +51,7 @@ class ContactController extends AbstractController
         if ($contactForm->isSubmitted() && $contactForm->isValid()) {
             $contact = $contactForm->getData();
 
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($contact);
-            $em->flush();
+            $this->manager->save($contact);
 
             $this->addFlash(
                 'success',
@@ -73,8 +71,7 @@ class ContactController extends AbstractController
      */
     public function show($id)
     {
-        $repo = $this->getDoctrine()->getRepository(Contact::class);
-        $contact = $repo->find($id);
+        $contact = $this->manager->getById($id);
 
         if (!$contact) {
             throw $this->createNotFoundException('Contact Not Found');

@@ -1,0 +1,20 @@
+services:
+#    finindev_bootstrap.example:
+#        class: Finindev\BootstrapBundle\Example
+#        arguments: ["@service_id", "plain_value", "%parameter%"]
+
+#  Finindev\BootstrapBundle\Twig\BootstrapExtension:
+#    class: Finindev\BootstrapBundle\Twig\BootstrapExtension
+#    arguments: []
+#    tags:
+#      - twig.extension
+
+  _defaults:
+    autowire: true      # Automatically injects dependencies in your services.
+    autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+  # makes classes in src/ available to be used as services
+  # this creates a service per class whose id is the fully-qualified class name
+  Finindev\BootstrapBundle\:
+    resource: '../../*'
+    exclude: '../../{DependencyInjection,Entity,Migrations,Tests,FinindevBootstrapBundle.php}'

@@ -29,7 +29,7 @@
         <listener class="Symfony\Bridge\PhpUnit\SymfonyTestsListener" />
     </listeners>
 
-    <logging>
+    <!--<logging>
         <log type="coverage-html" target="var/coverage" />
-    </logging>
+    </logging>-->
 </phpunit>
